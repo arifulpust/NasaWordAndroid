@@ -39,7 +39,7 @@ public class AtmosphereProgram extends ShaderProgram {
 
     public static final int FRAGMODE_PRIMARY_TEX_BLEND = 3;
 
-    protected double altitude = 160000;
+    protected double altitude = 16000000;
 
     protected int fragModeId;
 

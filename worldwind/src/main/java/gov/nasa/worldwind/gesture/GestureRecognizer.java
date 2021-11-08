@@ -37,7 +37,7 @@ public class GestureRecognizer {
 
     protected List<GestureListener> listenerList = new ArrayList<>();
 
-    protected float lowPassWeight = 0.4f;
+    protected float lowPassWeight = 1.8f;
 
     @WorldWind.GestureState
     private int state = WorldWind.POSSIBLE;

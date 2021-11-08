@@ -18,7 +18,7 @@ public class PanRecognizer extends GestureRecognizer {
 
     protected int maxNumberOfPointers = Integer.MAX_VALUE;
 
-    protected float interpretDistance = 20;
+    protected float interpretDistance = 40;
 
     public PanRecognizer() {
     }

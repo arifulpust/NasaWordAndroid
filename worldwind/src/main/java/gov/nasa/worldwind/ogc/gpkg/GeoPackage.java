@@ -7,6 +7,7 @@ package gov.nasa.worldwind.ogc.gpkg;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
@@ -150,6 +151,8 @@ public class GeoPackage {
             int max_x = cursor.getColumnIndex("max_x");
             int max_y = cursor.getColumnIndex("max_y");
             int srs_id = cursor.getColumnIndex("srs_id");
+            Log.e("tileMatrix",min_x+""+min_y);
+
 
             while (cursor.moveToNext()) {
                 GpkgContent content = new GpkgContent();
@@ -185,6 +188,7 @@ public class GeoPackage {
             int min_y = cursor.getColumnIndex("min_y");
             int max_x = cursor.getColumnIndex("max_x");
             int max_y = cursor.getColumnIndex("max_y");
+            Log.e("tileMatrix-",min_x+""+min_y);
 
             while (cursor.moveToNext()) {
                 GpkgTileMatrixSet tileMatrixSet = new GpkgTileMatrixSet();
@@ -221,6 +225,7 @@ public class GeoPackage {
             int tile_height = cursor.getColumnIndex("tile_height");
             int pixel_x_size = cursor.getColumnIndex("pixel_x_size");
             int pixel_y_size = cursor.getColumnIndex("pixel_y_size");
+            Log.e("tileMatrix->",tile_width+""+tile_height);
 
             while (cursor.moveToNext()) {
                 GpkgTileMatrix tileMatrix = new GpkgTileMatrix();

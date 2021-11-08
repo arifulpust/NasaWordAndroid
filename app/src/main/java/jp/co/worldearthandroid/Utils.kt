@@ -2,8 +2,10 @@ package jp.co.worldearthandroid
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
+import androidx.core.content.ContextCompat
 
 @SuppressLint("MissingPermission")
 fun Context.getLocation(): GeoLocation? {
@@ -50,4 +52,10 @@ fun Context.getLocation(): GeoLocation? {
     }
 
     return latLong
+}
+var  MIN_ALTITUDE=2.6214752977566265E7
+
+fun Context.getMyDrawable(id: Int): Drawable? {
+
+    return ContextCompat.getDrawable(this, id)
 }

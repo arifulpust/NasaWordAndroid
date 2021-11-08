@@ -35,28 +35,12 @@ import gov.nasa.worldwind.layer.RenderableLayer
 import jp.co.worldearthandroid.experimental.AtmosphereLayer
 import java.util.HashMap
 
-class MainActivity : AppCompatActivity() , FrameCallback {
+class MainActivity : AppCompatActivity(){
     //views
     private val renderableLayer //layer in which we can render our satellites and locations
             : RenderableLayer? = null
 
-    //private Placemark lastplackmark;
-    private val scaleUp = false
 
-    private val mSatelliteChipGroup: ChipGroup? = null
-
-    //day night Animation settings
-    private val sunLocation = Location(1.6, 18.6)
-
-    //protected double cameraDegreesPerSecond = 2.0;
-    protected var lightLatDegreesPerSec =
-        (0 + 15 / 60 + 0.1 / 3600) / 60 //dif 0° 15' 00.1" direction west
-
-    protected var lightLngDegreesPerSec = ((0 + 0 / 60 + 1 / 3600) / 60 //dif 0° 00' 01.0" south
-            ).toDouble()
-    protected var lastFrameTimeNanos: Long = 0
-    private val atmosphereLayer: AtmosphereLayer? = null
-    protected var fragmentPaused = false
 
     /**
      * This protected member allows derived classes to override the resource used in setContentView.
@@ -99,12 +83,14 @@ class MainActivity : AppCompatActivity() , FrameCallback {
         // Create the WorldWindow (a GLSurfaceView) which displays the globe.
         wwd = WorldWindow(this)
       //  wwd.RenderableLayer
-
+       // wwd?.background=getMyDrawable(R.drawable.tranparent_bg)
 
         // Add the WorldWindow view object to the layout that was reserved for the globe.
 
         // Add the WorldWindow view object to the layout that was reserved for the globe.
         val globeLayout = findViewById(R.id.globe) as FrameLayout
+       // wwd.getParent().setBackground(haritaArka PlanRengi);
+
         globeLayout.addView(wwd)
 
         // Setup the WorldWindow's layers.
@@ -113,6 +99,7 @@ class MainActivity : AppCompatActivity() , FrameCallback {
         wwd!!.layers.addLayer(BackgroundLayer())
         wwd!!.layers.addLayer(BlueMarbleLandsatLayer())
         wwd!!.layers.addLayer(AtmosphereLayer())
+       // wwd?.getParent().back(haritaArka PlanRengi);
 
         // Setup the WorldWindow's elevation coverages.
 
@@ -197,57 +184,12 @@ class MainActivity : AppCompatActivity() , FrameCallback {
 
             wwd!!.getNavigator().setLatitude( position.latitude)
             wwd!!.getNavigator().setLongitude( position.longitude)
-            wwd!!.getNavigator().setAltitude(2.6214752977566265E7) //converts to meter agian
+            wwd!!.getNavigator().setAltitude(MIN_ALTITUDE) //converts to meter agian
     }
     var startSatAnimation = false //after camera moved to activated satellite position start moving the satellite
 
     var  activeCameraValueAnimator :ValueAnimator?=null
-    fun moveCamera(
-        position: Position,
-        moveDuration: Long,
-        mode: String,
-        prevV: Double,
-        currentV: Double
-    ) {
-        //debug
-        // position.altitude = 1e7*2.1;
-        val currentCameraLat: Double = wwd?.getNavigator()!!.getLatitude()
-        val currentCameraLng: Double = wwd?.getNavigator()!!.getLongitude()
-        val currentCameraHeight: Double =
-            wwd!!.getNavigator().getAltitude() / 1000 //converts to km
-        activeCameraValueAnimator = ValueAnimator.ofFloat(
-            currentCameraLat.toFloat(),
-            position.latitude.toFloat()
-        )
-        activeCameraValueAnimator?.setInterpolator(LinearInterpolator())
-        activeCameraValueAnimator?.addUpdateListener(AnimatorUpdateListener { animation ->
-            if (fragmentPaused) return@AnimatorUpdateListener
-            val percent = animation.animatedFraction
-            //Log.w(TAG," sat lat percent :"+percent);
-            val lat = (1 - percent) * currentCameraLat + percent * position.latitude
-            val lng = (1 - percent) * currentCameraLng + percent * position.longitude
-            val altitude = (1 - percent) * currentCameraHeight + percent * position.altitude
-            val velocity = (1 - percent) * prevV + percent * currentV
-            wwd!!.getNavigator().setLatitude(lat)
-            wwd!!.getNavigator().setLongitude(lng)
-            wwd!!.getNavigator().setAltitude(altitude * 1000) //converts to meter agian
-            if (mode == "sat") {
-                val dataMap: MutableMap<String, Any> = HashMap()
-                dataMap["satName"] =""
-                dataMap["lat"] = lat
-                dataMap["lng"] = lng
-                dataMap["height"] = altitude
-                dataMap["velocity"] = velocity
-                dataMap["timestamp"] = System.currentTimeMillis()
-                val currentSatPos = Position(lat, lng, position.altitude * 1000)
-                // removeSatellite(lastplackmark);
-                //lastplackmark = GlobeUtils.addSatelliteToRenderableLayer(renderableLayer,currentSatPos,R.drawable.satellite_one);
-               // mapsActivity.updateUI(dataMap)
-            }
-        })
-        activeCameraValueAnimator!!.setDuration(moveDuration)
-        activeCameraValueAnimator!!.start()
-    }
+
     /**
      * Makes the crosshairs visible.
      */
@@ -331,57 +273,6 @@ class MainActivity : AppCompatActivity() , FrameCallback {
 
     fun getWorldWindow(): WorldWindow? {
         return wwd
-    }
-
-    override fun doFrame(frameTimeNanos: Long) {
-        if (this.lastFrameTimeNanos != 0L) {
-Log.e("globe","called")
-            // Compute the frame duration in seconds.
-            val frameDurationSeconds: Double = (frameTimeNanos - this.lastFrameTimeNanos) * 1.0e-9
-            // double cameraDegrees = (frameDurationSeconds * this.cameraDegreesPerSecond);
-
-            //find lat and lng difference in degree
-            val lightLatDiffDegrees: Double = frameDurationSeconds * this.lightLatDegreesPerSec
-            val lightLngDiffDegrees: Double = frameDurationSeconds * this.lightLngDegreesPerSec
-            this.sunLocation.latitude -= lightLatDiffDegrees
-            val lat: Double =
-                if (this.sunLocation.latitude < -90) -this.sunLocation.latitude - 90 else this.sunLocation.latitude
-            this.sunLocation.longitude -= lightLngDiffDegrees
-            val lng: Double =
-                if (this.sunLocation.longitude < -180) -this.sunLocation.longitude - 180 else this.sunLocation.longitude
-
-            // Move the navigator to simulate the Earth's rotation about its axis.
-            val navigator = getWorldWindow()!!.navigator
-            //navigator.setLongitude(navigator.getLongitude() - cameraDegrees);
-
-            // Move the sun location to simulate the Sun's rotation about the Earth.
-            this.sunLocation.set(lat, lng)
-            this.atmosphereLayer?.setLightLocation(this.sunLocation)
-
-            // Redraw the WorldWindow to display the above changes.
-            getWorldWindow()!!.requestRedraw()
-        }
-
-        // if the fragment is not stopped then call the function again to
-        // continue the animation
-
-        // if the fragment is not stopped then call the function again to
-        // continue the animation
-        if (!this.fragmentPaused) {
-            Choreographer.getInstance().postFrameCallback(this)
-        } else {
-            Choreographer.getInstance().removeFrameCallback(this)
-        }
-
-        //after satellite data loaded
-
-        //after satellite data loaded
-//        if (activeSatDataList.size > 0 && !this.fragmentPaused) {
-//            animateSatellite()
-//        }
-
-
-        this.lastFrameTimeNanos = frameTimeNanos
     }
 
 

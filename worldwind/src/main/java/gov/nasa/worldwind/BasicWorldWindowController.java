@@ -5,6 +5,7 @@
 
 package gov.nasa.worldwind;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.Arrays;
@@ -133,7 +134,8 @@ public class BasicWorldWindowController implements WorldWindowController, Gestur
             } else if (lon < -180 || lon > 180) {
                 this.lookAt.latitude = lat;
                 this.lookAt.longitude = Location.normalizeLongitude(lon);
-            } else {
+            } else
+                {
                 this.lookAt.latitude = lat;
                 this.lookAt.longitude = lon;
             }
@@ -211,13 +213,14 @@ public class BasicWorldWindowController implements WorldWindowController, Gestur
     protected void applyLimits(LookAt lookAt) {
         double distanceToExtents = this.wwd.distanceToViewGlobeExtents();
 
-        double minRange = 10;
-        double maxRange = distanceToExtents * 2;
+        double minRange = 0;
+        double maxRange = distanceToExtents * 2.5;
+        Log.e("applyLimits",WWMath.clamp(lookAt.range, minRange, maxRange)+"");
         lookAt.range = WWMath.clamp(lookAt.range, minRange, maxRange);
 
-        //double minTiltRange = distanceToExtents * 0.1;
-        //double maxTiltRange = distanceToExtents * 0.9;
-        //double tiltAmount = WWMath.clamp((lookAt.range - minTiltRange) / (maxTiltRange - minTiltRange), 0, 1);
+//        double minTiltRange = distanceToExtents * 0.1;
+//        double maxTiltRange = distanceToExtents * 0.9;
+//        double tiltAmount = WWMath.clamp((lookAt.range - minTiltRange) / (maxTiltRange - minTiltRange), 0, 1);
         double maxTilt = 80;
         lookAt.tilt = WWMath.clamp(lookAt.tilt, 0, maxTilt);
     }

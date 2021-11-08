@@ -5,6 +5,8 @@
 
 package gov.nasa.worldwind.ogc.gpkg;
 
+import android.util.Log;
+
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.ImageSource;
 import gov.nasa.worldwind.render.ImageTile;

@@ -20,7 +20,7 @@ public class PinchRecognizer extends GestureRecognizer {
 
     protected float referenceDistance = 0;
 
-    protected float interpretDistance = 20;
+    protected float interpretDistance = 40;
 
     protected int[] pointerIds = new int[2];
 

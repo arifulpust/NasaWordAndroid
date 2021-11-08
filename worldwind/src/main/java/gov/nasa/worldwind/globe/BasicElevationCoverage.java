@@ -5,6 +5,8 @@
 
 package gov.nasa.worldwind.globe;
 
+import android.util.Log;
+
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.geom.TileMatrix;
 import gov.nasa.worldwind.geom.TileMatrixSet;
@@ -44,8 +46,8 @@ public class BasicElevationCoverage extends TiledElevationCoverage {
         Sector sector = new Sector().setFullSphere();
         int matrixWidth = 4; // 4x2 top level matrix equivalent to 90 degree top level tiles
         int matrixHeight = 2;
-        int tileWidth = 200;
-        int tileHeight = 200;
+        int tileWidth = 256;
+        int tileHeight = 256;
         int numLevels = 13;
         this.setTileMatrixSet(TileMatrixSet.fromTilePyramid(sector, matrixWidth, matrixHeight, tileWidth, tileHeight, numLevels));
 
@@ -60,6 +62,7 @@ public class BasicElevationCoverage extends TiledElevationCoverage {
             public ImageSource createTileSource(TileMatrix tileMatrix, int row, int column) {
                 Sector sector = tileMatrix.tileSector(row, column);
                 String urlString = wmsTileFactory.urlForTile(sector, tileMatrix.tileWidth, tileMatrix.tileHeight);
+               // Log.e("data",urlString.toString()+  "  " );
                 return ImageSource.fromUrl(urlString);
             }
         });
